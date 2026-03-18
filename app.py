@@ -1,87 +1,47 @@
-import streamlit as st
-import pandas as pd
-from datetime import datetime
-import urllib.parse
-
-# --- 1. CONFIGURAÇÃO DA PÁGINA (Sempre a primeira linha!) ---
-st.set_page_config(page_title="Hub MLC - Mateus Lima", layout="wide")
-
-# --- 2. IDENTIDADE VISUAL E MODO NOTURNO ---
-st.markdown("""
-    <style>
-        .stApp { background-color: #0E1117; color: #FFFFFF; }
-        [data-testid="stSidebar"] { background-color: #1A1C24; }
-        .stButton>button { border-radius: 5px; border: 1px solid #FFD700; background-color: #1A1C24; color: #FFD700; width: 100%; }
-        .stButton>button:hover { background-color: #FFD700; color: #0E1117; }
-    </style>
-""", unsafe_allow_html=True)
-
-# --- 3. BARRA LATERAL ---
-st.sidebar.markdown(f"""
-    <div style="text-align: center; padding: 10px; border: 1px solid #FFD700; border-radius: 10px; background-color: #1A1C24;">
-        <h1 style="color: #FFD700; margin:0;">MLC</h1>
-        <p style="margin:0; font-size: 14px;"><b>Mateus Lima Cerqueira</b></p>
-        <p style="color: #FFD700; margin:0; font-size: 12px;">CRECI 29.705</p>
-    </div>
-""", unsafe_allow_html=True)
-
-st.sidebar.divider()
-
-modulo = st.sidebar.radio("Navegação Principal:", [
-    "🛰️ Radar de Oportunidades",
-    "🏠 Corretagem Tradicional",
-    "🏠 Leilões & Propostas",
-    "📜 Licitações (MEI)",
-    "💰 Gestão Financeira"
-])
-
-# --- 4. LÓGICA DOS MÓDULOS ---
-
-# MÓDULO: RADAR COM BOTÕES (O QUE VOCÊ PEDIU AGORA)
+# --- MÓDULO: RADAR COM LINKS EXTERNOS ---
 if modulo == "🛰️ Radar de Oportunidades":
     st.header("🛰️ Radar de Oportunidades (Salvador & RMS)")
-    st.write("Selecione o tipo de busca para iniciar o monitoramento:")
+    st.caption(f"Monitoramento Profissional | Mateus Lima - CRECI {CRECI_NUM}")
     
     col_btn1, col_btn2 = st.columns(2)
-    
     with col_btn1:
-        if st.button("🏠 Buscar Leilões da Caixa (Lauro/SSA)"):
-            with st.spinner("Varrendo editais de leilão..."):
-                st.success("Busca Finalizada!")
-                st.warning("**LEILÃO CAIXA:** Apartamento em Vilas do Atlântico detectado.")
-                st.write("Local: Lauro de Freitas | Desconto Estimado: 40%")
-
+        btn_imoveis = st.button("🏠 Buscar Leilões da Caixa (Lauro/SSA)")
     with col_btn2:
-        if st.button("📜 Buscar Licitações MEI (Bahia)"):
-            with st.spinner("Consultando portais de licitação..."):
-                st.success("Busca Finalizada!")
-                st.info("**PREFEITURA SSA:** Cota exclusiva MEI para Serviços de TI.")
-                st.write("Status: Aberto | Região: Salvador/Centro")
+        btn_mei = st.button("📜 Buscar Licitações MEI (Bahia)")
 
-# MÓDULO: FINANCEIRO
-elif modulo == "💰 Gestão Financeira":
-    st.header("💰 Controle de Honorários")
-    st.metric("Total a Receber (Previsto)", "R$ 15.000,00")
-    st.write("Use este espaço para gerenciar suas comissões de 6%.")
+    st.divider()
 
-# MÓDULO: CORRETAGEM
-elif modulo == "🏠 Corretagem Tradicional":
-    st.header("🏠 Gestão de Carteira (Salvador a Praia do Forte)")
-    st.write("Cadastre aqui seus imóveis de captação direta.")
+    # RESULTADOS DE IMÓVEIS (LEILÕES)
+    if btn_imoveis:
+        st.subheader("📍 Oportunidades em Destaque")
+        
+        # Exemplo 1: Imóvel em Lauro de Freitas
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 2])
+            with c1:
+                st.image("https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300")
+            with c2:
+                st.warning("**LEILÃO CAIXA:** Apartamento 3Q - Vilas do Atlântico")
+                st.write("📍 **Local:** Lauro de Freitas/BA")
+                st.write("💰 **Lance Inicial:** R$ 330.000,00")
+                
+                # LINK PARA O SITE DA CAIXA
+                url_caixa = "https://venda-imoveis.caixa.gov.br/sistema/busca-imovel.asp?sBtn=S&sEstado=BA&sCidade=4557"
+                st.link_button("🌐 Ver Detalhes no Site da Caixa", url_caixa)
 
-# MÓDULO: LEILÕES
-elif modulo == "🏠 Leilões & Propostas":
-    st.header("🏠 Análise de Leilões")
-    st.write("Foco em imóveis retomados e oportunidades de investimento.")
-
-# MÓDULO: LICITAÇÕES
-elif modulo == "📜 Licitações (MEI)":
-    st.header("📜 Gestão de Licitações")
-    st.write("Documentação e acompanhamento de processos para o seu MEI.")
-
-# --- RODAPÉ ---
-st.sidebar.divider()
-if st.sidebar.button("📲 Compartilhar Resumo via WhatsApp"):
-    texto = f"Hub MLC: Mateus Lima (CRECI 29.705) - Relatório de Oportunidades em Salvador e RMS."
-    url_zap = f"https://wa.me/?text={urllib.parse.quote(texto)}"
-    st.sidebar.markdown(f"[Clique aqui para enviar]({url_zap})")
+    # RESULTADOS DE LICITAÇÕES (MEI)
+    if btn_mei:
+        st.subheader("🏢 Editais para o seu MEI")
+        
+        # Exemplo 2: Licitação em Salvador
+        with st.container(border=True):
+            c1, c2 = st.columns([1, 2])
+            with c1:
+                st.image("https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=300")
+            with c2:
+                st.info("**PREFEITURA SSA:** Manutenção de Hardware")
+                st.write("📍 **Órgão:** Prefeitura de Salvador")
+                
+                # LINK PARA O PORTAL DE COMPRAS
+                url_licitacao = "https://www.compras.salvador.ba.gov.br/"
+                st.link_button("🌐 Ver Edital no Portal de Compras", url_licitacao)
